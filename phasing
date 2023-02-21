@@ -1,0 +1,45 @@
+local uis = game:GetService("UserInputService")
+local player = script.Parent
+local humanoid = player.Humanoid
+local World = game.Workspace
+local toggle = false
+local blacklist = {
+	Baseplate = true,
+	SpawnLocation = true,
+}
+
+local function isPartInBlacklist(part)
+	return blacklist[part.Name] ~= nil
+end
+
+local function Vtoggle()
+	if toggle == false then
+		toggle = true
+	else
+		toggle = false
+	end
+end
+
+local function onPartTouched(otherPart)
+	if toggle == true then
+		if not isPartInBlacklist(otherPart) then
+			otherPart.CanCollide = false-- do something
+			wait(0.5)
+		else
+			print("Blacklisted!")
+		end
+	end
+end
+
+humanoid.Touched:Connect(function(hit)
+	-- Check if the part was touched by a humanoid
+	onPartTouched(hit)
+end)
+
+game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessed)
+	if not gameProcessed  then
+		if input.KeyCode == Enum.KeyCode.V then
+			Vtoggle()
+		end
+	end
+end)
